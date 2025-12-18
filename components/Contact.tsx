@@ -3,6 +3,102 @@ import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Instagram, Send, Heart } from 'lucide-react';
 import { IMAGES, SOCIAL_LINKS } from '../constants';
 
+const ContactForm = () => {
+  const [status, setStatus] = React.useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setStatus('sending');
+
+    const formData = new FormData(e.currentTarget);
+
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/annynutri0@gmail.com", {
+        method: "POST",
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        setStatus('success');
+      } else {
+        setStatus('error');
+      }
+    } catch (error) {
+      console.error("Erro ao enviar formulário:", error);
+      setStatus('error');
+    }
+  };
+
+  if (status === 'success') {
+    return (
+      <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center animate-fade-in">
+        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Send className="w-8 h-8 text-brand-green" />
+        </div>
+        <h3 className="text-xl font-bold text-brand-dark mb-2">Mensagem Enviada!</h3>
+        <p className="text-gray-600 mb-6">Obrigada pelo contato. Responderei o mais breve possível!</p>
+        <button
+          onClick={() => setStatus('idle')}
+          className="text-brand-green font-bold hover:underline"
+        >
+          Enviar nova mensagem
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Configurações do Formsubmit */}
+      <input type="hidden" name="_template" value="table" />
+      <input type="hidden" name="_subject" value="Novo contato do Site!" />
+      <input type="hidden" name="_captcha" value="false" />
+
+      <div>
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
+        <input type="text" name="name" id="name" required className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none transition-all" placeholder="Seu nome" />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+          <input type="tel" name="phone" id="phone" required className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none transition-all" placeholder="(00) 00000-0000" />
+        </div>
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+          <input type="email" name="email" id="email" required className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none transition-all" placeholder="seu@email.com" />
+        </div>
+      </div>
+      <div>
+        <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Mensagem (Opcional)</label>
+        <textarea name="message" id="message" rows={4} className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none transition-all resize-none" placeholder="Conte um pouco sobre seu objetivo..."></textarea>
+      </div>
+
+      {status === 'error' && (
+        <div className="text-red-600 text-sm text-center">
+          Ocorreu um erro ao enviar. Por favor, tente novamente ou entre em contato pelo WhatsApp.
+        </div>
+      )}
+
+      <button
+        type="submit"
+        disabled={status === 'sending'}
+        className="w-full bg-brand-green text-white font-bold py-4 rounded-lg hover:bg-brand-green/90 transition-all flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+      >
+        {status === 'sending' ? (
+          'Enviando...'
+        ) : (
+          <>
+            <Send className="w-4 h-4" /> Enviar Mensagem
+          </>
+        )}
+      </button>
+    </form>
+  );
+};
+
 const Contact: React.FC = () => {
   return (
     <footer id="contact" className="bg-white pt-24 pb-8">
@@ -16,39 +112,7 @@ const Contact: React.FC = () => {
               <h3 className="text-2xl font-display font-bold text-brand-dark mb-2">Agende sua Consulta</h3>
               <p className="text-gray-600 mb-8">Preencha o formulário abaixo e entrarei em contato para marcar o melhor horário.</p>
 
-              <form
-                className="space-y-4"
-                action="https://formsubmit.co/annynutri0@gmail.com"
-                method="POST"
-              >
-                {/* Configurações do Formsubmit */}
-                <input type="hidden" name="_template" value="table" />
-                <input type="hidden" name="_subject" value="Novo contato do Site!" />
-                <input type="hidden" name="_captcha" value="false" />
-                {/* <input type="hidden" name="_next" value="https://annycamilly.com.br" /> URL de retorno, idealmente. Se não tiver domínio ainda, pode remover ou comentar */}
-
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
-                  <input type="text" name="name" id="name" required className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none transition-all" placeholder="Seu nome" />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
-                    <input type="tel" name="phone" id="phone" required className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none transition-all" placeholder="(00) 00000-0000" />
-                  </div>
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
-                    <input type="email" name="email" id="email" required className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none transition-all" placeholder="seu@email.com" />
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Mensagem (Opcional)</label>
-                  <textarea name="message" id="message" rows={4} className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none transition-all resize-none" placeholder="Conte um pouco sobre seu objetivo..."></textarea>
-                </div>
-                <button type="submit" className="w-full bg-brand-green text-white font-bold py-4 rounded-lg hover:bg-brand-green/90 transition-all flex justify-center items-center gap-2">
-                  <Send className="w-4 h-4" /> Enviar Mensagem
-                </button>
-              </form>
+              <ContactForm />
             </div>
 
             {/* Info & Image */}

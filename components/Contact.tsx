@@ -25,7 +25,7 @@ const Contact: React.FC = () => {
                 <input type="hidden" name="_template" value="table" />
                 <input type="hidden" name="_subject" value="Novo contato do Site!" />
                 <input type="hidden" name="_captcha" value="false" />
-                <input type="hidden" name="_next" value="https://annycamilly.com.br" /> {/* URL de retorno, idealmente. Se não tiver domínio ainda, pode remover ou comentar */}
+                {/* <input type="hidden" name="_next" value="https://annycamilly.com.br" /> URL de retorno, idealmente. Se não tiver domínio ainda, pode remover ou comentar */}
 
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
